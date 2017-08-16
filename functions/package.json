@@ -1,10 +1,24 @@
 {
-  "name": "functions",
+  "name": "hosting_node_firebase",
   "description": "Cloud Functions for Firebase",
   "dependencies": {
+    "body-parser": "^1.17.2",
     "express": "^4.15.4",
     "firebase-admin": "~4.2.1",
-    "firebase-functions": "^0.5.9"
+    "firebase-functions": "^0.5.9",
+    "nodemailer": "^4.0.1"
   },
-  "private": true
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Victor de Andres",
+  "license": "ISC",
+  "keywords": [
+    "node",
+    "firebase"
+  ]
 }
