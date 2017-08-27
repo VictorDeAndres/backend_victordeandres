@@ -20,7 +20,7 @@ function sendMail(name, mailAddress, message, callback){
         if (err){
           return callback(true, `${err}`);
         } else {
-          return callback(true, `Message from ${name}<${mailAddress}> ${message}`);
+          return callback(false, `Message from ${name}<${mailAddress}> ${message}`);
         }
     });
   }
@@ -37,7 +37,7 @@ mailModule.sendContactMail = function(req, res){
     const message = req.body.message;
     sendMail(name, mailAddress, message, function(err, response){
       if (err){
-        res.status(400).send(err);
+        res.status(400).send(response);
       } else {
         res.status(200).send(response);
       }
@@ -47,5 +47,7 @@ mailModule.sendContactMail = function(req, res){
     res.status(400).send(`${err}`);
   }
 };
+
+mailModule.sendMail = sendMail;
 
 module.exports = mailModule;
