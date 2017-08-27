@@ -21,14 +21,14 @@ mailModule.sendContactMail = function(req, res){
         text: `${message}`
     }, (err, info) => {
         if (err){
-          res.status(202).send(`${err}`);
+          res.status(200).send(`${err}`);
         } else {
           res.status(200).send(`Message from ${name}<${mailAddress}> ${message}`);
         }
     });
   }
   catch(err) {
-    res.status(202).send(`${err}`);
+    res.status(400).send(`${err}`);
   }
 
 };
