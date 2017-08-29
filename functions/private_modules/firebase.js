@@ -7,10 +7,12 @@ function write(idpost, user, comment, callback){
 
   try {
 
-    firebase.initializeApp({
-      databaseURL: 'https://blog-d845e.firebaseio.com',
-      // serviceAccount: 'myapp-13ad200fc320.json', //this is file that I downloaded from Firebase Console
-    });
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        databaseURL: 'https://blog-d845e.firebaseio.com',
+        // serviceAccount: 'myapp-13ad200fc320.json', //this is file that I downloaded from Firebase Console
+      });
+    }
 
     const TIMESTAMP = new Date().getTime();
     const CURRENTDATE = new Date();
