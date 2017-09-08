@@ -7,7 +7,9 @@
     "firebase": "^4.3.0",
     "firebase-admin": "~4.2.1",
     "firebase-functions": "^0.5.9",
-    "nodemailer": "^4.0.1"
+    "nodemailer": "^4.0.1",
+    "nodemailer-smtp-transport": "^2.7.4",
+    "xoauth2": "^1.2.0"
   },
   "private": true,
   "version": "1.0.0",

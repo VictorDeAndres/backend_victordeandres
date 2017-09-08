@@ -50,7 +50,7 @@ ${name} ha escrito el siguiente comentario en el post ${idpost}.
 
 "${comment}"        
 `
-        mailModule.sendMail('blog@victordeandres.es', 'blog@victordeandres.es', message, function(err, response){
+        mailModule.sendMail(`${name}`, '', `Nuevo comentario en ${idpost}`, message, function(err, response){
           if (err){
             res.status(202).send(response);
           } else {
