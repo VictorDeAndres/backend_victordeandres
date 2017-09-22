@@ -1,6 +1,8 @@
 const firebaseModule = {};
 
 const firebase = require('firebase');
+const functions = require('firebase-functions');
+
 const mailModule = require('./mail.js');
 
 function write(idpost, user, comment, callback){
@@ -9,13 +11,25 @@ function write(idpost, user, comment, callback){
 
     if (!firebase.apps.length) {
       firebase.initializeApp({
-        databaseURL: 'https://blog-d845e.firebaseio.com',
-        // serviceAccount: 'myapp-13ad200fc320.json', //this is file that I downloaded from Firebase Console
+        apiKey: functions.config().db.apikey,
+        authDomain: functions.config().db.authdomain,
+        databaseURL: functions.config().db.databaseurl,
+        projectId: functions.config().db.projectid,
+        storageBucket: functions.config().db.storagebucket,
+        messagingSenderId: functions.config().db.messagingsenderid
       });
     }
 
     const TIMESTAMP = new Date().getTime();
     const CURRENTDATE = new Date();
+
+    firebase.auth().signInWithEmailAndPassword(functions.config().authmail.user, functions.config().authmail.clientsecret)
+      .catch(function(error) {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error(`Error (${errorCode}) ${errorMessage}`);
+    });
 
     firebase.database().ref(`/${idpost}/${TIMESTAMP}`).set({
         username: user,
