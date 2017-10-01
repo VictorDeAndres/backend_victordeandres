@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const smtpTransport = require("nodemailer-smtp-transport");
 const xoauth2 = require('xoauth2');
 
-const functions = require('firebase-functions');
+const envVariables = require('./config_variables.js');
 
 function sendMail(name, mailAddress, subject, message, callback){
 
@@ -14,10 +14,10 @@ function sendMail(name, mailAddress, subject, message, callback){
       service: 'Gmail',
       auth:{
         xoauth2: xoauth2.createXOAuth2Generator({
-          user: functions.config().authmail.user,
-          clientId: functions.config().authmail.clientid,
-          clientSecret: functions.config().authmail.clientsecret,
-          refreshToken: functions.config().authmail.refreshtoken
+          user: envVariables.data().gmail.user,
+          clientId: envVariables.data().gmail.clientId,
+          clientSecret: envVariables.data().gmail.clientSecret,
+          refreshToken: envVariables.data().gmail.refreshToken
         })
       }
     }));
@@ -34,10 +34,12 @@ function sendMail(name, mailAddress, subject, message, callback){
           return callback(false, `Message from ${name}<${mailAddress}>. OK`);
         }
     });
+    
+    // return callback(false, '');
 
   }
   catch(err) {
-    return callback(true, `${err}`);
+    return callback(true, `[sendMail] ${err}`);
   }
 }
 
@@ -64,7 +66,7 @@ ${req.body.message}`;
     });
   }
   catch(err) {
-    res.status(400).send(`${err}`);
+    res.status(400).send(`[SendContactMail] ${err}`);
   }
 };
 

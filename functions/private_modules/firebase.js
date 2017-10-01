@@ -1,48 +1,51 @@
 const firebaseModule = {};
 
 const firebase = require('firebase');
-const functions = require('firebase-functions');
+const envVariables = require('./config_variables.js');
+
 
 const mailModule = require('./mail.js');
 
-function write(idpost, user, comment, callback){
+function writedb(idpost, user, comment, callback){
 
   try {
 
     if (!firebase.apps.length) {
       firebase.initializeApp({
-        apiKey: functions.config().db.apikey,
-        authDomain: functions.config().db.authdomain,
-        databaseURL: functions.config().db.databaseurl,
-        projectId: functions.config().db.projectid,
-        storageBucket: functions.config().db.storagebucket,
-        messagingSenderId: functions.config().db.messagingsenderid
+        apiKey: envVariables.data().firedb.apiKey,
+        authDomain: envVariables.data().firedb.authDomain,
+        databaseURL: envVariables.data().firedb.databaseURL,
+        projectId: envVariables.data().firedb.projectId,
+        storageBucket: envVariables.data().firedb.storageBucket,
+        messagingSenderId: envVariables.data().firedb.messagingSenderId
       });
     }
 
     const TIMESTAMP = new Date().getTime();
     const CURRENTDATE = new Date();
 
-    firebase.auth().signInWithEmailAndPassword(functions.config().authmail.user, functions.config().authmail.clientsecret)
+    firebase.auth().signInWithEmailAndPassword(envVariables.data().gmail.user, envVariables.data().gmail.clientSecret)
+      .then(function(firebaseUser) {
+        firebase.database().ref(`/${idpost}/${TIMESTAMP}`).set({
+            username: user,
+            commentdate : {
+              day: `${CURRENTDATE.getDate()}/${CURRENTDATE.getMonth() + 1}/${CURRENTDATE.getFullYear()}`,
+              hour:`${CURRENTDATE.getHours()}:${CURRENTDATE.getMinutes()}`,
+            },
+            comment: comment
+        });
+        return callback(false, `El comentario en ${idpost} de ${user} se ha registrado correctamente`);
+      })
       .catch(function(error) {
         // Handle Errors here.
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.error(`Error (${errorCode}) ${errorMessage}`);
+        return callback(true, `Error ([firebaseAuth] ${errorCode}) ${errorMessage}`);
     });
 
-    firebase.database().ref(`/${idpost}/${TIMESTAMP}`).set({
-        username: user,
-        commentdate : {
-          day: `${CURRENTDATE.getDate()}/${CURRENTDATE.getMonth() + 1}/${CURRENTDATE.getFullYear()}`,
-          hour:`${CURRENTDATE.getHours()}:${CURRENTDATE.getMinutes()}`,
-        },
-        comment: comment
-    });
-    return callback(false, `El comentario en ${idpost} de ${user} se ha registrado correctamente`);
   }
   catch(err){
-    return callback(true, `${err}`)
+    return callback(true, `[write] ${err}.`)
   }
 
 }
@@ -53,7 +56,8 @@ firebaseModule.addcomment = function(req, res){
     const name = req.body.name;
     const comment = req.body.comment;
 
-    write(idpost, name, comment, function(err, response){
+
+    writedb(idpost, name, comment, function(err, response){
       if (err){
         res.status(400).send(response);    
       } else {
@@ -75,7 +79,7 @@ ${name} ha escrito el siguiente comentario en el post ${idpost}.
     });
   }
   catch(err) {
-    res.status(400).send(`${err}`);
+    res.status(400).send(`[addcomment] ${err}`);
   }
 }
 
